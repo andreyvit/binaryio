@@ -12,10 +12,11 @@ var ErrInvalidVarint = errors.New("invalid varint")
 var ErrIntegerSizeMismatch = errors.New("integer size mismatch")
 
 type Reader struct {
-	rem  []byte
-	orig []byte
-	err  error
-	offs int64
+	ByteOrder ByteOrder
+	rem       []byte
+	orig      []byte
+	err       error
+	offs      int64
 }
 
 type Error struct {
@@ -28,18 +29,26 @@ func (e *Error) Error() string {
 	return fmt.Sprintf("%v at offset %d decoding %x <!> %x (len=%d)", e.Err, e.Offset, e.Data[:e.Offset], e.Data[e.Offset:], len(e.Data))
 }
 
-func NewReader(data []byte) *Reader {
+func NewReader(data []byte, bo ByteOrder) *Reader {
 	r := new(Reader)
-	r.Reset(data)
+	r.ResetBO(data, bo)
 	return r
 }
 
 func (r *Reader) Reset(data []byte) {
-	*r = Reader{data, data, nil, 0}
+	*r = Reader{r.ByteOrder, data, data, nil, 0}
+}
+
+func (r *Reader) ResetBO(data []byte, bo ByteOrder) {
+	*r = Reader{bo, data, data, nil, 0}
 }
 
 func (r *Reader) ResetErr(data []byte, err error) {
-	*r = Reader{data, data, err, 0}
+	*r = Reader{r.ByteOrder, data, data, err, 0}
+}
+
+func (r *Reader) Offset() int64 {
+	return r.offs
 }
 
 func (r *Reader) Fail(err error) {

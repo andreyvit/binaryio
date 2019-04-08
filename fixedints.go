@@ -1,14 +1,39 @@
 package binaryio
 
+func (r *Reader) TryReadUint16() (uint16, bool) {
+	if !r.need(2) {
+		return 0, false
+	}
+
+	b := r.rem
+	var v uint16
+	if r.ByteOrder == LittleEndian {
+		v = uint16(b[0])
+		v |= uint16(b[1]) << (8 * 1)
+	} else {
+		v = uint16(b[1])
+		v |= uint16(b[0]) << (8 * 1)
+	}
+	r.skipInternal(3)
+	return v, true
+}
+
 func (r *Reader) TryReadUint24() (uint32, bool) {
 	if !r.need(3) {
 		return 0, false
 	}
 
 	b := r.rem
-	v := uint32(b[0])
-	v |= uint32(b[1]) << (8 * 1)
-	v |= uint32(b[2]) << (8 * 2)
+	var v uint32
+	if r.ByteOrder == LittleEndian {
+		v = uint32(b[0])
+		v |= uint32(b[1]) << (8 * 1)
+		v |= uint32(b[2]) << (8 * 2)
+	} else {
+		v = uint32(b[2])
+		v |= uint32(b[1]) << (8 * 1)
+		v |= uint32(b[0]) << (8 * 2)
+	}
 	r.skipInternal(3)
 	return v, true
 }
@@ -19,16 +44,27 @@ func (r *Reader) TryReadUint32() (uint32, bool) {
 	}
 
 	b := r.rem
-	v := uint32(b[0])
-	v |= uint32(b[1]) << (8 * 1)
-	v |= uint32(b[2]) << (8 * 2)
-	v |= uint32(b[3]) << (8 * 3)
+	var v uint32
+	if r.ByteOrder == LittleEndian {
+		v = uint32(b[0])
+		v |= uint32(b[1]) << (8 * 1)
+		v |= uint32(b[2]) << (8 * 2)
+		v |= uint32(b[3]) << (8 * 3)
+	} else {
+		v = uint32(b[3])
+		v |= uint32(b[2]) << (8 * 1)
+		v |= uint32(b[1]) << (8 * 2)
+		v |= uint32(b[0]) << (8 * 3)
+	}
 	r.skipInternal(4)
 	return v, true
 }
 func (r *Reader) ReadUint32() uint32 {
 	v, _ := r.TryReadUint32()
 	return v
+}
+func (r *Reader) ReadInt32() int32 {
+	return int32(r.ReadUint32())
 }
 
 func (r *Reader) TryReadUint64() (uint64, bool) {
@@ -37,23 +73,32 @@ func (r *Reader) TryReadUint64() (uint64, bool) {
 	}
 
 	b := r.rem
-	v := uint64(b[0])
-	v |= uint64(b[1]) << (8 * 1)
-	v |= uint64(b[2]) << (8 * 2)
-	v |= uint64(b[3]) << (8 * 3)
-	v |= uint64(b[4]) << (8 * 4)
-	v |= uint64(b[5]) << (8 * 5)
-	v |= uint64(b[6]) << (8 * 6)
-	v |= uint64(b[7]) << (8 * 7)
+	var v uint64
+	if r.ByteOrder == LittleEndian {
+		v = uint64(b[0])
+		v |= uint64(b[1]) << (8 * 1)
+		v |= uint64(b[2]) << (8 * 2)
+		v |= uint64(b[3]) << (8 * 3)
+		v |= uint64(b[4]) << (8 * 4)
+		v |= uint64(b[5]) << (8 * 5)
+		v |= uint64(b[6]) << (8 * 6)
+		v |= uint64(b[7]) << (8 * 7)
+	} else {
+		v = uint64(b[7])
+		v |= uint64(b[6]) << (8 * 1)
+		v |= uint64(b[5]) << (8 * 2)
+		v |= uint64(b[4]) << (8 * 3)
+		v |= uint64(b[3]) << (8 * 4)
+		v |= uint64(b[2]) << (8 * 5)
+		v |= uint64(b[1]) << (8 * 6)
+		v |= uint64(b[0]) << (8 * 7)
+	}
 	r.skipInternal(8)
 	return v, true
 }
 func (r *Reader) ReadUint64() uint64 {
 	v, _ := r.TryReadUint64()
 	return v
-}
-func (r *Reader) ReadInt32() int32 {
-	return int32(r.ReadUint32())
 }
 func (r *Reader) ReadInt64() int64 {
 	return int64(r.ReadUint64())

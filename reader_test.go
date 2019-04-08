@@ -3,13 +3,14 @@ package binaryio_test
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/andreyvit/binaryio"
 )
 
 func ExampleReader() {
 	data, _ := hex.DecodeString("02400a48656c6c6fe80787308856")
 
-	r := binaryio.NewReader(data)
+	r := binaryio.NewReader(data, binaryio.LittleEndian)
 	ver := r.ReadUvarint()
 	id := r.ReadVarint()
 	name := r.ReadString()

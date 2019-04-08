@@ -1,9 +1,10 @@
 package binaryio_test
 
 import (
-	"github.com/andreyvit/binaryio"
 	"math"
 	"testing"
+
+	"github.com/andreyvit/binaryio"
 )
 
 func TestFixedIntsRoundtrip(t *testing.T) {
@@ -14,7 +15,7 @@ func TestFixedIntsRoundtrip(t *testing.T) {
 	w.WriteUint32(math.MaxUint32)
 	w.WriteUint64(math.MaxUint64)
 
-	r := binaryio.NewReader(w.Bytes())
+	r := binaryio.NewReader(w.Bytes(), binaryio.LittleEndian)
 	if a, e := r.ReadInt32(), int32(1000000000); a != e {
 		t.Fatalf("ReadInt32() == %v, wanted %v", a, e)
 	}

@@ -3,8 +3,9 @@ package binaryio_test
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/andreyvit/binaryio"
 	"time"
+
+	"github.com/andreyvit/binaryio"
 )
 
 type Foo struct {
@@ -26,11 +27,11 @@ func (foo *Foo) Serialize(c binaryio.Coder) {
 
 func Example_serializable() {
 	a := Foo{32, "Hello", 1000, time.Date(2016, 1, 2, 20, 18, 15, 0, time.UTC)}
-	data := binaryio.Serialize(&a)
+	data := binaryio.Serialize(&a, binaryio.LittleEndian)
 	fmt.Printf("Encode() = %x\n", data)
 
 	var b Foo
-	err := binaryio.Deserialize(&b, data)
+	err := binaryio.Deserialize(&b, data, binaryio.LittleEndian)
 	if err != nil {
 		panic(err)
 	}
@@ -39,7 +40,7 @@ func Example_serializable() {
 	old, _ := hex.DecodeString("01400a48656c6c6fe807")
 
 	var c Foo
-	err = binaryio.Deserialize(&c, old)
+	err = binaryio.Deserialize(&c, old, binaryio.LittleEndian)
 	if err != nil {
 		panic(err)
 	}

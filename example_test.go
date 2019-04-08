@@ -3,8 +3,9 @@ package binaryio_test
 import (
 	"encoding/hex"
 	"fmt"
-	"github.com/andreyvit/binaryio"
 	"time"
+
+	"github.com/andreyvit/binaryio"
 )
 
 type Bar struct {
@@ -34,11 +35,11 @@ func (bar *Bar) Decode(r *binaryio.Reader) {
 
 func Example() {
 	a := Bar{32, "Hello", 1000, time.Date(2016, 1, 2, 20, 18, 15, 0, time.UTC)}
-	data := binaryio.Encode(&a)
+	data := binaryio.Encode(&a, binaryio.LittleEndian)
 	fmt.Printf("Encode() = %x\n", data)
 
 	var b Bar
-	err := binaryio.Decode(&b, data)
+	err := binaryio.Decode(&b, data, binaryio.LittleEndian)
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +48,7 @@ func Example() {
 	old, _ := hex.DecodeString("01400a48656c6c6fe807")
 
 	var c Bar
-	err = binaryio.Decode(&c, old)
+	err = binaryio.Decode(&c, old, binaryio.LittleEndian)
 	if err != nil {
 		panic(err)
 	}

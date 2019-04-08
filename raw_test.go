@@ -3,6 +3,7 @@ package binaryio_test
 import (
 	"encoding/hex"
 	"fmt"
+
 	"github.com/andreyvit/binaryio"
 )
 
@@ -11,7 +12,7 @@ func ExampleReader_ReadN() {
 	if err != nil {
 		panic(err)
 	}
-	r := binaryio.NewReader(data)
+	r := binaryio.NewReader(data, binaryio.LittleEndian)
 
 	b := r.ReadN(1)
 	fmt.Printf("%x %v\n", b, r.Err())

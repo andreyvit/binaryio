@@ -12,29 +12,29 @@ type Serializable interface {
 	Serialize(c Coder)
 }
 
-func Encode(e Encodable) []byte {
+func Encode(e Encodable, bo ByteOrder) []byte {
 	var w Writer
 	e.Encode(&w)
 	return w.Bytes()
 }
 
-func Decode(d Decodable, data []byte) error {
+func Decode(d Decodable, data []byte, bo ByteOrder) error {
 	var r Reader
-	r.Reset(data)
+	r.ResetBO(data, bo)
 	d.Decode(&r)
 	r.ExpectEOF()
 	return r.Err()
 }
 
-func Serialize(c Serializable) []byte {
+func Serialize(c Serializable, bo ByteOrder) []byte {
 	var w Writer
 	c.Serialize(&w)
 	return w.Bytes()
 }
 
-func Deserialize(c Serializable, data []byte) error {
+func Deserialize(c Serializable, data []byte, bo ByteOrder) error {
 	var r Reader
-	r.Reset(data)
+	r.ResetBO(data, bo)
 	c.Serialize(&r)
 	r.ExpectEOF()
 	return r.Err()
